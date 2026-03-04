@@ -478,7 +478,8 @@ function highlight(code, lang) {
     Clojure: {
       keywords:  /\b(defn|def|let|fn|if|cond|when|do|loop|recur|reduce|map|filter|for|case|and|or|not|nil|true|false)\b/g,
       types:     /\b([A-Z][a-zA-Z0-9-]*)\b/g,
-      // capture group instead of lookbehind for broader browser support
+      // Uses a two-group capture (open-paren + name) instead of lookbehind
+      // so that the pattern works in older browsers that lack lookbehind support.
       fns:       /(\()([a-z][a-zA-Z0-9-?!]*)/g,
       strings:   /("(?:[^"\\]|\\.)*")/g,
       numbers:   /\b\d+(\.\d+)?\b/g,
@@ -488,7 +489,8 @@ function highlight(code, lang) {
     Lisp: {
       keywords:  /\b(defun|let|let\*|labels|loop|when|unless|if|cond|and|or|not|nil|t|setf|defvar|defparameter|do|dotimes|dolist|return|progn|lambda|apply|funcall)\b/g,
       types:     /\b([A-Z][a-zA-Z0-9-]*)\b/g,
-      // capture group instead of lookbehind for broader browser support
+      // Uses a two-group capture (open-paren + name) instead of lookbehind
+      // so that the pattern works in older browsers that lack lookbehind support.
       fns:       /(\()([a-z][a-zA-Z0-9-?!]*)/g,
       strings:   /("(?:[^"\\]|\\.)*")/g,
       numbers:   /\b\d+(\.\d+)?\b/g,
