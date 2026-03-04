@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Functional programming solutions to all 169 Grind LeetCode problems in TypeScript, Haskell, Elixir, Rust, Scala, OCaml, Clojure, and Common Lisp." />
+  <title>Algo Functional — Grind 169 in 8 Functional Languages</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ── Top App Bar ── -->
+  <header class="app-bar">
+    <div class="app-bar__logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="28" height="28" rx="6" fill="rgba(255,255,255,0.2)"/>
+        <text x="5" y="21" font-size="18" fill="white" font-family="monospace" font-weight="bold">λ</text>
+      </svg>
+      <span>Algo Functional</span>
+    </div>
+    <div class="app-bar__spacer"></div>
+    <nav class="app-bar__nav" aria-label="Main navigation">
+      <button class="btn-nav ripple active" id="navList">Problems</button>
+      <button class="btn-nav ripple" id="navMatrix">Matrix</button>
+    </nav>
+    <button class="btn-icon" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle theme">🌙</button>
+  </header>
+
+  <!-- ── Main Container ── -->
+  <main class="main-container" id="app">
+
+    <!-- ── List View ── -->
+    <section class="view active" id="view-list" aria-label="Problem list">
+
+      <div class="hero">
+        <h1 class="hero__title">Grind 169 — Functional Style</h1>
+        <p class="hero__sub">
+          All 169 Grind LeetCode problems solved using purely functional patterns
+          across 8 languages.
+        </p>
+        <div class="hero__stats" id="heroStats">
+          <div class="stat">
+            <span class="stat__num">169</span>
+            <span class="stat__label">Problems</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">8</span>
+            <span class="stat__label">Languages</span>
+          </div>
+          <div class="stat" id="heroSolved">
+            <span class="stat__num">–</span>
+            <span class="stat__label">Solved</span>
+          </div>
+          <div class="stat" id="heroSolutions">
+            <span class="stat__num">–</span>
+            <span class="stat__label">Solutions</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar" role="search">
+        <div class="search-wrap">
+          <span class="icon" aria-hidden="true">🔍</span>
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Search by title or LeetCode number…"
+            aria-label="Search problems"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="filter-group" id="diffFilters" role="group" aria-label="Difficulty filter">
+          <span class="filter-label">Difficulty</span>
+          <button class="btn-filter ripple active-diff-all" data-diff="all">All</button>
+          <button class="btn-filter ripple" data-diff="Easy">Easy</button>
+          <button class="btn-filter ripple" data-diff="Med">Med</button>
+          <button class="btn-filter ripple" data-diff="Hard">Hard</button>
+        </div>
+
+        <div class="filter-group" id="langFilters" role="group" aria-label="Language filter">
+          <span class="filter-label">Has solution in</span>
+          <button class="btn-filter ripple" data-lang="TypeScript">TS</button>
+          <button class="btn-filter ripple" data-lang="Haskell">HS</button>
+          <button class="btn-filter ripple" data-lang="Elixir">EX</button>
+          <button class="btn-filter ripple" data-lang="Rust">RS</button>
+          <button class="btn-filter ripple" data-lang="Scala">SC</button>
+          <button class="btn-filter ripple" data-lang="OCaml">ML</button>
+          <button class="btn-filter ripple" data-lang="Clojure">CJ</button>
+          <button class="btn-filter ripple" data-lang="Lisp">LS</button>
+        </div>
+      </div>
+
+      <div class="results-info" id="resultsInfo" aria-live="polite">Showing all 169 problems</div>
+      <div class="problems-grid" id="problemList" role="list" aria-label="Problems"></div>
+    </section>
+
+    <!-- ── Detail View ── -->
+    <section class="view" id="view-detail" aria-label="Problem detail">
+      <div id="detailContent"></div>
+    </section>
+
+    <!-- ── Matrix View ── -->
+    <section class="view" id="view-matrix" aria-label="Checklist matrix">
+      <div class="hero">
+        <h2 class="hero__title">Solution Matrix</h2>
+        <p class="hero__sub">All 169 problems × 8 languages — coverage at a glance.</p>
+      </div>
+      <div id="matrixContent"></div>
+    </section>
+
+  </main>
+
+  <!-- ── Scripts ── -->
+  <script src="js/data.js"></script>
+  <script src="js/solutions.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
