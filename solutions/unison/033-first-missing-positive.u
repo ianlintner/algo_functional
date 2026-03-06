@@ -1,0 +1,14 @@
+--
+-- Problem 33: First Missing Positive (LeetCode 41)
+-- Difficulty: Hard
+-- Language: Unison
+--
+-- Unison version for problem 33
+-- Derived from the functional reference implementation already in the registry.
+import qualified Data.Set as Set
+
+firstMissingPositive : [Int] -> Int
+firstMissingPositive nums =
+  let s = Set.fromList (filter (> 0) nums)
+      go i = if Set.member i s then go (i + 1) else i
+  in go 1

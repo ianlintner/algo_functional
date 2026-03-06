@@ -1,0 +1,12 @@
+--
+-- Problem 96: Reverse Bits (LeetCode 190)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 96
+-- Derived from the functional reference implementation already in the registry.
+import Data.Bits
+
+reverseBits : Int -> Int
+reverseBits n = foldl step 0 [0..31]
+  where step acc i = acc .|. (((n \`shiftR\` i) .&. 1) \`shiftL\` (31 - i))

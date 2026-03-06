@@ -1,0 +1,28 @@
+--
+-- Problem 25: Next Permutation (LeetCode 31)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 25
+-- Derived from the functional reference implementation already in the registry.
+import Data.List (findIndex, sort)
+import Data.Optional (fromJust)
+
+nextPermutation : Ord a => [a] -> [a]
+nextPermutation xs =
+  case findSwapIndex (reverse (zip [0..] xs)) of
+    None -> reverse xs
+    Some i  ->
+      let j = last [k | (k, v) <- zip [0..] xs, v > xs !! i]
+          swapped = swap i j xs
+      in take (i + 1) swapped ++ reverse (drop (i + 1) swapped)
+  where
+    findSwapIndex ((i1,v1):(i2,v2):rest)
+      | v2 < v1 = Some i2
+      | otherwise = findSwapIndex ((i2,v2):rest)
+    findSwapIndex _ = None
+    swap i j arr =
+      [if k == i then arr !! j
+       else if k == j then arr !! i
+       else v
+      | (k, v) <- zip [0..] arr]

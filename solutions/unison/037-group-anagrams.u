@@ -1,0 +1,16 @@
+--
+-- Problem 37: Group Anagrams (LeetCode 49)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 37
+-- Derived from the functional reference implementation already in the registry.
+import Data.List (sort, groupBy, sortBy)
+import Data.Ord (comparing)
+
+groupAnagrams : [String] -> [[String]]
+groupAnagrams strs =
+  map (map snd) .
+  groupBy (\a b -> fst a == fst b) .
+  sortBy (comparing fst) $
+  map (\s -> (sort s, s)) strs

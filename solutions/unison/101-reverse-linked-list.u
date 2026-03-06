@@ -1,0 +1,12 @@
+--
+-- Problem 101: Reverse Linked List (LeetCode 206)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 101
+-- Derived from the functional reference implementation already in the registry.
+reverseList : [a] -> [a]
+reverseList = foldl (flip (:)) []
+-- For linked list nodes:
+-- reverse' Nil acc = acc
+-- reverse' (Node v next) acc = reverse' next (Node v acc)

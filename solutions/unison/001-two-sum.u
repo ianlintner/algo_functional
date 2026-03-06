@@ -1,0 +1,24 @@
+--
+-- Problem 1: Two Sum (LeetCode 1)
+-- Difficulty: Easy
+-- Language: Unison
+--
+twoSum : [Int] -> Int -> [Int]
+twoSum nums target =
+  let
+    lookup key pairs =
+      match pairs with
+        [] -> None
+        (k, value) +: rest ->
+          if k == key then Some value else lookup key rest
+
+    go remaining index seen =
+      match remaining with
+        [] -> []
+        x +: xs ->
+          let complement = target - x
+          in match lookup complement seen with
+            Some found -> [found, index]
+            None -> go xs (index + 1) ((x, index) +: seen)
+  in
+    go nums 0 []

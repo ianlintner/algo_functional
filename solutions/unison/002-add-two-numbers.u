@@ -1,0 +1,30 @@
+--
+-- Problem 2: Add Two Numbers (LeetCode 2)
+-- Difficulty: Med
+-- Language: Unison
+--
+addTwoNumbers : [Int] -> [Int] -> [Int]
+addTwoNumbers l1 l2 =
+  let
+    go a b carry =
+      match (a, b, carry) with
+        ([], [], 0) -> []
+        _ ->
+          let
+            v1 = match a with
+              [] -> 0
+              x +: _ -> x
+            v2 = match b with
+              [] -> 0
+              x +: _ -> x
+            rest1 = match a with
+              [] -> []
+              _ +: xs -> xs
+            rest2 = match b with
+              [] -> []
+              _ +: xs -> xs
+            total = v1 + v2 + carry
+          in
+            mod total 10 +: go rest1 rest2 (total / 10)
+  in
+    go l1 l2 0

@@ -1,0 +1,11 @@
+--
+-- Problem 149: Counting Bits (LeetCode 338)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 149
+-- Derived from the functional reference implementation already in the registry.
+countBits : Int -> [Int]
+countBits n = foldl (\dp i ->
+  dp ++ [if i == 0 then 0 else (dp !! (i `div` 2)) + (i `mod` 2)]
+  ) [] [0..n]

@@ -1,0 +1,14 @@
+--
+-- Problem 66: Construct Binary Tree from Preorder and Inorder Traversal (LeetCode 105)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 66
+-- Derived from the functional reference implementation already in the registry.
+buildTree : Eq a => [a] -> [a] -> Tree a
+buildTree [] _ = Nil
+buildTree (r:pre) ino =
+  let (left, _:right) = break (== r) ino
+      n = length left
+  in Node r (buildTree (take n pre) left)
+            (buildTree (drop n pre) right)

@@ -30,6 +30,8 @@ const langDir: Record<Language, string> = {
   OCaml: "ocaml",
   Clojure: "clojure",
   Lisp: "lisp",
+  Scheme: "scheme",
+  Unison: "unison",
 };
 
 let created = 0;
@@ -88,7 +90,10 @@ function getCommentStyle(lang: Language): CommentStyle {
       return { start: "(*", end: "*)", line: "  " };
     case "Clojure":
     case "Lisp":
+    case "Scheme":
       return { start: ";;", end: ";;", line: ";; " };
+    case "Unison":
+      return { start: "--", end: "--", line: "-- " };
   }
 }
 

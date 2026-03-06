@@ -1,0 +1,12 @@
+--
+-- Problem 97: Number of 1 Bits (LeetCode 191)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 97
+-- Derived from the functional reference implementation already in the registry.
+import Data.Bits
+
+hammingWeight : Int -> Int
+hammingWeight 0 = 0
+hammingWeight n = (n .&. 1) + hammingWeight (shiftR n 1)

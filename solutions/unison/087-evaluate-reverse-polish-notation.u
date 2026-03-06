@@ -1,0 +1,15 @@
+--
+-- Problem 87: Evaluate Reverse Polish Notation (LeetCode 150)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 87
+-- Derived from the functional reference implementation already in the registry.
+evalRPN : [String] -> Int
+evalRPN = head . foldl step []
+  where
+    step (b:a:rest) "+" = (a + b) : rest
+    step (b:a:rest) "-" = (a - b) : rest
+    step (b:a:rest) "*" = (a * b) : rest
+    step (b:a:rest) "/" = (a \`quot\` b) : rest
+    step stack n        = read n : stack

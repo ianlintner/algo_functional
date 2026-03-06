@@ -1,0 +1,24 @@
+--
+-- Problem 105: Course Schedule II (LeetCode 210)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 105
+-- Derived from the functional reference implementation already in the registry.
+import qualified Data.Map as M
+import qualified Data.Set as S
+
+findOrder : Int -> [(Int,Int)] -> [Int]
+findOrder n prereqs = if cycle then [] else order
+  where
+    graph = foldl (\g (a,b) -> M.insertWith (++) b [a] g) M.empty prereqs
+    dfs v (path, done, ord, cyc)
+      | cyc || S.member v done = (path, done, ord, cyc)
+      | S.member v path = (path, done, ord, True)
+      | otherwise =
+          let (p, d, o, c) = foldl (\s nb -> dfs nb s)
+                (S.insert v path, done, ord, False)
+                (M.findWithDefault [] v graph)
+          in (p, S.insert v d, o ++ [v], c)
+    (_, _, order, cycle) = foldl (\s i -> dfs i s)
+      (S.empty, S.empty, [], False) [0..n-1]

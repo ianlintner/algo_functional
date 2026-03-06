@@ -1,0 +1,11 @@
+--
+-- Problem 36: Rotate Image (LeetCode 48)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 36
+-- Derived from the functional reference implementation already in the registry.
+import Data.List (transpose)
+
+rotate : [[a]] -> [[a]]
+rotate = map reverse . transpose

@@ -2,7 +2,7 @@
 
 ## Project
 
-**Algo Functional**: Grind 169 LeetCode problems solved in 8 functional languages.
+**Algo Functional**: Grind 169 LeetCode problems solved in 10 functional languages.
 React 19 + TypeScript 5.9 + Tailwind 4 + Vite 7.
 
 ## Quick Reference
@@ -23,7 +23,7 @@ React 19 + TypeScript 5.9 + Tailwind 4 + Vite 7.
 ## Rules
 
 1. **Functional style only**: no imperative loops, prefer reduce/fold/map/filter, immutability, recursion, pure functions
-2. **All 8 languages**: TypeScript, Haskell, Elixir, Rust, Scala, OCaml, Clojure, Lisp
+2. **All 10 languages**: TypeScript, Haskell, Elixir, Rust, Scala, OCaml, Clojure, Lisp, Scheme, Unison
 3. **Self-contained solutions**: no external dependencies beyond standard library
 4. **Strict TypeScript**: no `any`, pass `tsc --noEmit` with strict mode
 5. **When adding problems**: update both `problems.ts` and `solutions.ts`, then run `npm run extract`

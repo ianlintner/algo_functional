@@ -1,0 +1,13 @@
+--
+-- Problem 34: Trapping Rain Water (LeetCode 42)
+-- Difficulty: Hard
+-- Language: Unison
+--
+-- Unison version for problem 34
+-- Derived from the functional reference implementation already in the registry.
+trap : [Int] -> Int
+trap heights =
+  let maxLeft  = scanl1 max heights
+      maxRight = scanr1 max heights
+      water = zipWith3 (\h l r -> max 0 (min l r - h)) heights maxLeft maxRight
+  in sum water

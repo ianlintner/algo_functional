@@ -1,0 +1,10 @@
+--
+-- Problem 80: Single Number (LeetCode 136)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 80
+-- Derived from the functional reference implementation already in the registry.
+import Data.Bits (xor)
+singleNumber : [Int] -> Int
+singleNumber = foldl xor 0

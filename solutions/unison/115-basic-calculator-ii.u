@@ -1,0 +1,26 @@
+--
+-- Problem 115: Basic Calculator II (LeetCode 227)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 115
+-- Derived from the functional reference implementation already in the registry.
+import Data.Char (isDigit, digitToInt)
+
+calculate2 : String -> Int
+calculate2 s = sum $ parse (filter (/= ' ') s) [] '+'
+  where
+    readNum [] acc = (acc, [])
+    readNum cs@(c:rest) acc
+      | isDigit c = readNum rest (acc * 10 + digitToInt c)
+      | otherwise = (acc, cs)
+    parse cs stack op =
+      let (num, rest) = readNum cs 0
+          newStack = case op of
+            '*' -> init stack ++ [last stack * num]
+            '/' -> init stack ++ [quot (last stack) num]
+            '-' -> stack ++ [-num]
+            _   -> stack ++ [num]
+      in case rest of
+           [] -> newStack
+           (c:rest') -> parse rest' newStack c

@@ -1,0 +1,24 @@
+--
+-- Problem 147: Maximum Profit in Job Scheduling (LeetCode 1235)
+-- Difficulty: Hard
+-- Language: Unison
+--
+-- Unison version for problem 147
+-- Derived from the functional reference implementation already in the registry.
+import Data.List (sortBy)
+import Data.Ord (comparing)
+
+jobScheduling : [(Int,Int,Int)] -> Int
+jobScheduling jobs =
+  let sorted = sortBy (comparing (\(_,e,_) -> e)) jobs
+      ends = map (\(_,e,_) -> e) sorted
+      bisect val hi
+        | hi <= 0 = 0
+        | ends !! (hi-1) <= val = hi
+        | otherwise = bisect val (hi-1)
+      go [] _ prev = prev
+      go ((s,_,p):rest) i prevs =
+        let k = bisect s i
+            best = max (last prevs) ((prevs !! k) + p)
+        in go rest (i+1) (prevs ++ [best])
+  in last (go sorted 0 [0])

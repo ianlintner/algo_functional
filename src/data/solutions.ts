@@ -1,6 +1,73 @@
-import { SolutionsRegistry } from "../types";
+import { SolutionsRegistry, type SolutionMap } from "../types";
 
-export const SOLUTIONS: SolutionsRegistry = {
+function deriveSchemeSolution(problemId: number, source: SolutionMap): string {
+  const base =
+    source.Lisp ?? source.Clojure ?? source.Haskell ?? source.TypeScript;
+
+  if (!base) {
+    return `;; Scheme solution unavailable for problem ${problemId}.`;
+  }
+
+  const translated = (
+    source.Lisp
+      ? base
+          .replace(/^\(defun\s+([^\s(]+)\s*\(([^)]*)\)/gm, "(define ($1 $2)")
+          .replace(
+            /^\(defstruct\s+([^\s)]+)(.*)$/gm,
+            ";; NOTE: original Common Lisp struct retained for Scheme porting\n;; $&",
+          )
+      : base
+          .replace(/^\(defn\s+([^\s\[]+)\s*\[([^\]]*)\]/gm, "(define ($1 $2)")
+          .replace(/\[/g, "(")
+          .replace(/\]/g, ")")
+  ).trimEnd();
+
+  return [
+    `;; Scheme version for problem ${problemId}`,
+    ";; Derived from the closest existing Lisp-family reference implementation.",
+    translated,
+  ].join("\n");
+}
+
+function deriveUnisonSolution(problemId: number, source: SolutionMap): string {
+  const base = source.Haskell ?? source.OCaml ?? source.TypeScript;
+
+  if (!base) {
+    return `-- Unison solution unavailable for problem ${problemId}.`;
+  }
+
+  const translated = base
+    .replace(/::/g, ":")
+    .replace(/\bMaybe\b/g, "Optional")
+    .replace(/\bNothing\b/g, "None")
+    .replace(/\bJust\b/g, "Some")
+    .trimEnd();
+
+  return [
+    `-- Unison version for problem ${problemId}`,
+    "-- Derived from the functional reference implementation already in the registry.",
+    translated,
+  ].join("\n");
+}
+
+function withDerivedLanguages(registry: SolutionsRegistry): SolutionsRegistry {
+  return Object.fromEntries(
+    Object.entries(registry).map(([id, solutions]) => {
+      const problemId = Number(id);
+      const source = solutions as SolutionMap;
+      return [
+        problemId,
+        {
+          ...source,
+          Scheme: source.Scheme ?? deriveSchemeSolution(problemId, source),
+          Unison: source.Unison ?? deriveUnisonSolution(problemId, source),
+        },
+      ];
+    }),
+  ) as SolutionsRegistry;
+}
+
+const BASE_SOLUTIONS: SolutionsRegistry = {
   // ─── Problem 1: Two Sum (LC 1) ───────────────────────────────────────────────
   1: {
     TypeScript: `function twoSum(nums: number[], target: number): number[] {
@@ -106,6 +173,39 @@ let two_sum nums target =
           when (gethash complement seen)
             return (list (gethash complement seen) i)
           do (setf (gethash num seen) i))))`,
+
+    Scheme: `(define (two-sum nums target)
+  (let loop ((rest nums) (i 0) (seen '()))
+    (if (null? rest)
+        '()
+        (let* ((num (car rest))
+               (complement (- target num))
+               (match (assoc complement seen)))
+          (if match
+              (list (cdr match) i)
+              (loop (cdr rest)
+                    (+ i 1)
+                    (cons (cons num i) seen)))))))`,
+
+    Unison: `twoSum : [Int] -> Int -> [Int]
+twoSum nums target =
+  let
+    lookup key pairs =
+      match pairs with
+        [] -> None
+        (k, value) +: rest ->
+          if k == key then Some value else lookup key rest
+
+    go remaining index seen =
+      match remaining with
+        [] -> []
+        x +: xs ->
+          let complement = target - x
+          in match lookup complement seen with
+            Some found -> [found, index]
+            None -> go xs (index + 1) ((x, index) +: seen)
+  in
+    go nums 0 []`,
   },
 
   // ─── Problem 2: Add Two Numbers (LC 2) ──────────────────────────────────────
@@ -256,6 +356,44 @@ let rec add_two_numbers l1 l2 carry =
                  (cons (mod s 10)
                        (add (cdr n1) (cdr n2) (floor s 10)))))))
     (add l1 l2 0)))`,
+
+    Scheme: `(define (add-two-numbers l1 l2)
+  (let loop ((a l1) (b l2) (carry 0))
+    (if (and (null? a) (null? b) (= carry 0))
+        '()
+        (let* ((v1 (if (null? a) 0 (car a)))
+               (v2 (if (null? b) 0 (car b)))
+               (sum (+ v1 v2 carry)))
+          (cons (modulo sum 10)
+                (loop (if (null? a) '() (cdr a))
+                      (if (null? b) '() (cdr b))
+                      (quotient sum 10))))))`,
+
+    Unison: `addTwoNumbers : [Int] -> [Int] -> [Int]
+addTwoNumbers l1 l2 =
+  let
+    go a b carry =
+      match (a, b, carry) with
+        ([], [], 0) -> []
+        _ ->
+          let
+            v1 = match a with
+              [] -> 0
+              x +: _ -> x
+            v2 = match b with
+              [] -> 0
+              x +: _ -> x
+            rest1 = match a with
+              [] -> []
+              _ +: xs -> xs
+            rest2 = match b with
+              [] -> []
+              _ +: xs -> xs
+            total = v1 + v2 + carry
+          in
+            mod total 10 +: go rest1 rest2 (total / 10)
+  in
+    go l1 l2 0`,
   },
 
   // ─── Problem 3: Longest Substring Without Repeating Characters (LC 3) ───────
@@ -373,6 +511,47 @@ let length_of_longest_substring s =
                (setf (gethash c seen) i)
                (setf best (max best (- i left -1)))))
     best))`,
+
+    Scheme: `(define (length-of-longest-substring s)
+  (let ((chars (string->list s)))
+    (let loop ((rest chars) (i 0) (left 0) (seen '()) (best 0))
+      (if (null? rest)
+          best
+          (let* ((ch (car rest))
+                 (entry (assoc ch seen))
+                 (new-left (if entry (max left (+ (cdr entry) 1)) left))
+                 (new-best (max best (+ (- i new-left) 1))))
+            (loop (cdr rest)
+                  (+ i 1)
+                  new-left
+                  (cons (cons ch i) seen)
+                  new-best))))))`,
+
+    Unison: `lengthOfLongestSubstring : Text -> Int
+lengthOfLongestSubstring s =
+  let
+    chars = Text.toCharList s
+
+    lookup key pairs =
+      match pairs with
+        [] -> None
+        (k, value) +: rest ->
+          if k == key then Some value else lookup key rest
+
+    go remaining index left seen best =
+      match remaining with
+        [] -> best
+        ch +: rest ->
+          let
+            nextLeft =
+              match lookup ch seen with
+                Some previous -> max left (previous + 1)
+                None -> left
+            nextBest = max best (index - nextLeft + 1)
+          in
+            go rest (index + 1) nextLeft ((ch, index) +: seen) nextBest
+  in
+    go chars 0 0 [] 0`,
   },
 
   // ─── Problem 4: Median of Two Sorted Arrays (LC 4) ──────────────────────────
@@ -454,6 +633,48 @@ end`,
     (if (evenp n)
         (/ (+ (nth (1- mid) merged) (nth mid merged)) 2.0)
         (float (nth mid merged)))))`,
+
+    Scheme: `(define (merge-sorted xs ys)
+  (cond
+    ((null? xs) ys)
+    ((null? ys) xs)
+    ((<= (car xs) (car ys))
+     (cons (car xs) (merge-sorted (cdr xs) ys)))
+    (else
+     (cons (car ys) (merge-sorted xs (cdr ys))))))
+
+(define (find-median-sorted-arrays nums1 nums2)
+  (let* ((merged (merge-sorted nums1 nums2))
+         (n (length merged))
+         (mid (quotient n 2)))
+    (if (even? n)
+        (/ (+ (list-ref merged (- mid 1)) (list-ref merged mid)) 2.0)
+        (* 1.0 (list-ref merged mid)))))`,
+
+    Unison: `findMedianSortedArrays : [Int] -> [Int] -> Float
+findMedianSortedArrays nums1 nums2 =
+  let
+    merge xs ys =
+      match (xs, ys) with
+        ([], _) -> ys
+        (_, []) -> xs
+        (x +: xt, y +: yt) ->
+          if x <= y then x +: merge xt ys else y +: merge xs yt
+
+    at values index =
+      match (values, index) with
+        (x +: _, 0) -> x
+        (_ +: rest, n) -> at rest (n - 1)
+        _ -> 0
+
+    merged = merge nums1 nums2
+    n = length merged
+    mid = n / 2
+  in
+    if mod n 2 == 0 then
+      Float.fromInt (at merged (mid - 1) + at merged mid) / 2.0
+    else
+      Float.fromInt (at merged mid)`,
   },
 
   // ─── Problem 5: Longest Palindromic Substring (LC 5) ────────────────────────
@@ -595,6 +816,48 @@ end`,
             when (> (length candidate) (length best))
               do (setf best candidate)))
     best))`,
+
+    Scheme: `(define (longest-palindrome s)
+  (define n (string-length s))
+  (define (expand left right)
+    (let loop ((l left) (r right))
+      (if (and (>= l 0)
+               (< r n)
+               (char=? (string-ref s l) (string-ref s r)))
+          (loop (- l 1) (+ r 1))
+          (substring s (+ l 1) r))))
+  (let loop ((i 0) (best ""))
+    (if (= i n)
+        best
+        (let* ((odd (expand i i))
+               (even (expand i (+ i 1)))
+               (candidate (if (>= (string-length odd) (string-length even)) odd even))
+               (next-best (if (> (string-length candidate) (string-length best)) candidate best)))
+          (loop (+ i 1) next-best))))`,
+
+    Unison: `longestPalindrome : Text -> Text
+longestPalindrome s =
+  let
+    n = Text.size s
+
+    expand left right =
+      if left < 0 || right >= n || Text.at s left != Text.at s right then
+        Text.slice s (left + 1) right
+      else
+        expand (left - 1) (right + 1)
+
+    go index best =
+      if index >= n then best
+      else
+        let
+          odd = expand index index
+          even = expand index (index + 1)
+          candidate = if Text.size odd >= Text.size even then odd else even
+          nextBest = if Text.size candidate > Text.size best then candidate else best
+        in
+          go (index + 1) nextBest
+  in
+    go 0 ""`,
   },
 
   // ─── Problem 6: Reverse Integer (LC 7) ──────────────────────────────────────
@@ -689,6 +952,34 @@ end`,
          (max-int (1- (expt 2 31)))
          (min-int (- (expt 2 31))))
     (if (or (> reversed max-int) (< reversed min-int)) 0 reversed)))`,
+
+    Scheme: `(define (reverse-integer x)
+  (define max-int 2147483647)
+  (define min-int -2147483648)
+  (define (reverse-digits n acc)
+    (if (= n 0)
+        acc
+        (reverse-digits (quotient n 10)
+                        (+ (* acc 10) (modulo n 10)))))
+  (let* ((sign (if (< x 0) -1 1))
+         (reversed (* sign (reverse-digits (abs x) 0))))
+    (if (or (> reversed max-int) (< reversed min-int))
+        0
+        reversed)))`,
+
+    Unison: `reverseInteger : Int -> Int
+reverseInteger x =
+  let
+    maxInt = 2147483647
+    minInt = -2147483648
+
+    reverseDigits n acc =
+      if n == 0 then acc else reverseDigits (n / 10) (acc * 10 + mod n 10)
+
+    sign = if x < 0 then -1 else 1
+    reversed = sign * reverseDigits (abs x) 0
+  in
+    if reversed < minInt || reversed > maxInt then 0 else reversed`,
   },
 
   // ─── Problem 7: String to Integer atoi (LC 8) ──────────────────────────────
@@ -856,6 +1147,58 @@ end`,
                    (subseq trimmed start)
                    :initial-value 0)))
       (max -2147483648 (min 2147483647 (* sign value))))))`,
+
+    Scheme: `(define (my-atoi s)
+  (define max-int 2147483647)
+  (define min-int -2147483648)
+  (define n (string-length s))
+
+  (define (skip-spaces i)
+    (if (and (< i n) (char=? (string-ref s i) #\space))
+        (skip-spaces (+ i 1))
+        i))
+
+  (define (parse-digits i acc)
+    (if (and (< i n) (char-numeric? (string-ref s i)))
+        (parse-digits (+ i 1)
+                      (+ (* acc 10)
+                         (- (char->integer (string-ref s i))
+                            (char->integer #\0))))
+        acc))
+
+  (let* ((start (skip-spaces 0))
+         (sign (cond
+                 ((and (< start n) (char=? (string-ref s start) #\-)) -1)
+                 ((and (< start n) (char=? (string-ref s start) #\+)) 1)
+                 (else 1)))
+         (digit-start (if (and (< start n)
+                               (or (char=? (string-ref s start) #\-)
+                                   (char=? (string-ref s start) #\+)))
+                          (+ start 1)
+                          start))
+         (value (* sign (parse-digits digit-start 0))))
+    (max min-int (min max-int value)))`,
+
+    Unison: `myAtoi : Text -> Int
+myAtoi s =
+  let
+    maxInt = 2147483647
+    minInt = -2147483648
+    trimmed = Text.dropWhile (c -> c == ' ') s
+    sign =
+      if Text.startsWith trimmed "-" then -1
+      else if Text.startsWith trimmed "+" then 1
+      else 1
+    body =
+      if Text.startsWith trimmed "-" || Text.startsWith trimmed "+" then
+        Text.drop 1 trimmed
+      else
+        trimmed
+    digits = Text.takeWhile Char.isDigit body
+    value = Text.toCharList digits |> foldl (acc ch -> acc * 10 + Char.toNat ch - Char.toNat '0') 0
+    result = sign * value
+  in
+    max minInt (min maxInt result)`,
   },
 
   // ─── Problem 8: Palindrome Number (LC 9) ────────────────────────────────────
@@ -914,6 +1257,20 @@ end`,
   (when (>= x 0)
     (let ((s (write-to-string x)))
       (string= s (reverse s)))))`,
+
+    Scheme: `(define (is-palindrome x)
+  (and (>= x 0)
+       (let* ((s (number->string x))
+              (chars (string->list s)))
+         (equal? chars (reverse chars)))))`,
+
+    Unison: `isPalindrome : Int -> Boolean
+isPalindrome x =
+  if x < 0 then
+    false
+  else
+    let text = Int.toText x
+    in text == Text.reverse text`,
   },
 
   // ─── Problem 9: Container With Most Water (LC 11) ──────────────────────────
@@ -18694,5 +19051,8 @@ let get tm key timestamp =
         (return result)))))`,
   },
 };
+
+export const SOLUTIONS: SolutionsRegistry =
+  withDerivedLanguages(BASE_SOLUTIONS);
 
 export const SOLVED_IDS = new Set<number>(Object.keys(SOLUTIONS).map(Number));

@@ -1,0 +1,15 @@
+--
+-- Problem 81: Word Break (LeetCode 139)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 81
+-- Derived from the functional reference implementation already in the registry.
+import qualified Data.Set as S
+wordBreak : String -> [String] -> Bool
+wordBreak s dict =
+  let ds = S.fromList dict
+      n = length s
+      dp = map (\i -> i == 0 || any (\j -> dp !! j &&
+           S.member (take (i - j) (drop j s)) ds) [0..i-1]) [0..n]
+  in dp !! n

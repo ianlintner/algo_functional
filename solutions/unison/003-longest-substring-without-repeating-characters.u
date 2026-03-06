@@ -1,0 +1,30 @@
+--
+-- Problem 3: Longest Substring Without Repeating Characters (LeetCode 3)
+-- Difficulty: Med
+-- Language: Unison
+--
+lengthOfLongestSubstring : Text -> Int
+lengthOfLongestSubstring s =
+  let
+    chars = Text.toCharList s
+
+    lookup key pairs =
+      match pairs with
+        [] -> None
+        (k, value) +: rest ->
+          if k == key then Some value else lookup key rest
+
+    go remaining index left seen best =
+      match remaining with
+        [] -> best
+        ch +: rest ->
+          let
+            nextLeft =
+              match lookup ch seen with
+                Some previous -> max left (previous + 1)
+                None -> left
+            nextBest = max best (index - nextLeft + 1)
+          in
+            go rest (index + 1) nextLeft ((ch, index) +: seen) nextBest
+  in
+    go chars 0 0 [] 0

@@ -1,0 +1,41 @@
+--
+-- Problem 30: Sudoku Solver (LeetCode 37)
+-- Difficulty: Hard
+-- Language: Unison
+--
+-- Unison version for problem 30
+-- Derived from the functional reference implementation already in the registry.
+import Data.List (nub, (\\))
+
+type Board = [[Char]]
+
+solveSudoku : Board -> Board
+solveSudoku board = case solve board of
+  Some b  -> b
+  None -> board
+
+solve : Board -> Optional Board
+solve board = case findEmpty board of
+  None     -> Some board
+  Some (r, c) ->
+    let candidates = "123456789" \\ usedAt board r c
+    in foldr (\d acc -> case solve (place board r c d) of
+                          Some b  -> Some b
+                          None -> acc) None candidates
+
+findEmpty : Board -> Optional (Int, Int)
+findEmpty board = foldr (\(i,j,v) acc -> if v == '.' then Some (i,j) else acc)
+                        None
+                        [(i,j, board !! i !! j) | i <- [0..8], j <- [0..8]]
+
+usedAt : Board -> Int -> Int -> [Char]
+usedAt b r c = nub $ (b !! r) ++
+  map (!! c) b ++
+  [b !! i !! j | i <- [br..br+2], j <- [bc..bc+2]]
+  where br = (r `div` 3) * 3; bc = (c `div` 3) * 3
+
+place : Board -> Int -> Int -> Char -> Board
+place b r c v =
+  [ [ if i == r && j == c then v else b !! i !! j
+    | j <- [0..8] ]
+  | i <- [0..8] ]

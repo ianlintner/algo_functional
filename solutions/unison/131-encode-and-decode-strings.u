@@ -1,0 +1,17 @@
+--
+-- Problem 131: Encode and Decode Strings (LeetCode 271)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 131
+-- Derived from the functional reference implementation already in the registry.
+encode : [String] -> String
+encode = concatMap (\s -> show (length s) ++ "#" ++ s)
+
+decode : String -> [String]
+decode [] = []
+decode s =
+  let (numStr, rest) = span (/= '#') s
+      n = read numStr : Int
+      word = take n (tail rest)
+  in word : decode (drop n (tail rest))

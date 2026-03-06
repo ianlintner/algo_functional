@@ -1,0 +1,17 @@
+--
+-- Problem 157: Middle of the Linked List (LeetCode 876)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 157
+-- Derived from the functional reference implementation already in the registry.
+data ListNode = ListNode { val : Int, next : Optional ListNode }
+
+middleNode : Optional ListNode -> Optional ListNode
+middleNode head =
+  let nodes = collect head
+      collect None = []
+      collect (Some n) = n : collect (next n)
+      len = length nodes
+  in if null nodes then None
+     else Some (nodes !! (len `div` 2))

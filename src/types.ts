@@ -8,7 +8,9 @@ export type Language =
   | "Scala"
   | "OCaml"
   | "Clojure"
-  | "Lisp";
+  | "Lisp"
+  | "Scheme"
+  | "Unison";
 
 export const LANGUAGES: Language[] = [
   "TypeScript",
@@ -19,6 +21,8 @@ export const LANGUAGES: Language[] = [
   "OCaml",
   "Clojure",
   "Lisp",
+  "Scheme",
+  "Unison",
 ];
 
 export const LANG_SHORT: Record<Language, string> = {
@@ -30,6 +34,8 @@ export const LANG_SHORT: Record<Language, string> = {
   OCaml: "ML",
   Clojure: "CJ",
   Lisp: "LS",
+  Scheme: "SCM",
+  Unison: "UNI",
 };
 
 export const LANG_EXT: Record<Language, string> = {
@@ -41,6 +47,8 @@ export const LANG_EXT: Record<Language, string> = {
   OCaml: "ml",
   Clojure: "clj",
   Lisp: "lisp",
+  Scheme: "scm",
+  Unison: "u",
 };
 
 export interface Problem {

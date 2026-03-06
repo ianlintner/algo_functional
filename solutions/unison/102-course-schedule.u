@@ -1,0 +1,26 @@
+--
+-- Problem 102: Course Schedule (LeetCode 207)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 102
+-- Derived from the functional reference implementation already in the registry.
+import qualified Data.Map as M
+import qualified Data.Set as S
+
+canFinish : Int -> [(Int,Int)] -> Bool
+canFinish n prereqs = not hasCycle
+  where
+    graph = foldl (\g (a,b) -> M.insertWith (++) b [a] g) M.empty prereqs
+    dfs v (path, done)
+      | S.member v done = (False, (path, done))
+      | S.member v path = (True, (path, done))
+      | otherwise =
+          let (cyc, s) = foldl
+                (\(c, s') nb -> if c then (True, s') else dfs nb s')
+                (False, (S.insert v path, done))
+                (M.findWithDefault [] v graph)
+          in (cyc, (fst s, S.insert v (snd s)))
+    (hasCycle, _) = foldl
+      (\(c, s) i -> if c then (True, s) else dfs i s)
+      (False, (S.empty, S.empty)) [0..n-1]

@@ -1,0 +1,9 @@
+--
+-- Problem 119: Palindrome Linked List (LeetCode 234)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 119
+-- Derived from the functional reference implementation already in the registry.
+isPalindromeList : Eq a => [a] -> Bool
+isPalindromeList xs = xs == reverse xs

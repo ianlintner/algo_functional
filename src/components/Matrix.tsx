@@ -18,7 +18,8 @@ export default function Matrix() {
       <div className="text-center mb-8 py-6">
         <h1 className="text-3xl font-bold">Solution Matrix</h1>
         <p className="mt-2 text-gray-500 dark:text-gray-400">
-          All 169 problems × 8 languages — coverage at a glance.
+          All 169 problems × {LANGUAGES.length} languages — coverage at a
+          glance.
         </p>
       </div>
 

@@ -1,0 +1,12 @@
+--
+-- Problem 8: Palindrome Number (LeetCode 9)
+-- Difficulty: Easy
+-- Language: Unison
+--
+isPalindrome : Int -> Boolean
+isPalindrome x =
+  if x < 0 then
+    false
+  else
+    let text = Int.toText x
+    in text == Text.reverse text

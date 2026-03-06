@@ -1,0 +1,12 @@
+--
+-- Problem 42: Spiral Matrix (LeetCode 54)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 42
+-- Derived from the functional reference implementation already in the registry.
+spiralOrder : [[Int]] -> [Int]
+spiralOrder [] = []
+spiralOrder (top:rest) = top ++ spiralOrder (rotate rest)
+  where rotate = map reverse . transpose
+-- requires: import Data.List (transpose)

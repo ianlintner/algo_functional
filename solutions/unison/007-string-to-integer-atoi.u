@@ -1,0 +1,25 @@
+--
+-- Problem 7: String to Integer (atoi) (LeetCode 8)
+-- Difficulty: Med
+-- Language: Unison
+--
+myAtoi : Text -> Int
+myAtoi s =
+  let
+    maxInt = 2147483647
+    minInt = -2147483648
+    trimmed = Text.dropWhile (c -> c == ' ') s
+    sign =
+      if Text.startsWith trimmed "-" then -1
+      else if Text.startsWith trimmed "+" then 1
+      else 1
+    body =
+      if Text.startsWith trimmed "-" || Text.startsWith trimmed "+" then
+        Text.drop 1 trimmed
+      else
+        trimmed
+    digits = Text.takeWhile Char.isDigit body
+    value = Text.toCharList digits |> foldl (acc ch -> acc * 10 + Char.toNat ch - Char.toNat '0') 0
+    result = sign * value
+  in
+    max minInt (min maxInt result)

@@ -1,0 +1,23 @@
+--
+-- Problem 158: Random Pick with Weight (LeetCode 528)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 158
+-- Derived from the functional reference implementation already in the registry.
+import System.Random (randomRIO)
+
+type WeightedPicker = [Int]  -- prefix sums
+
+buildPicker : [Int] -> WeightedPicker
+buildPicker = scanl1 (+)
+
+pickIndex : WeightedPicker -> IO Int
+pickIndex ps = do
+  let total = last ps
+  target <- randomRIO (1, total)
+  let search lo hi
+        | lo >= hi = lo
+        | otherwise = let mid = (lo + hi) `div` 2
+                      in if ps !! mid < target then search (mid+1) hi else search lo mid
+  return $ search 0 (length ps - 1)

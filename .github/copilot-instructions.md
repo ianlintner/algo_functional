@@ -2,12 +2,12 @@
 
 ## Project Overview
 
-This is a study site for the **Grind 169** LeetCode interview problems, solved in **8 functional programming languages**: TypeScript, Haskell, Elixir, Rust, Scala, OCaml, Clojure, and Common Lisp.
+This is a study site for the **Grind 169** LeetCode interview problems, solved in **10 functional programming languages**: TypeScript, Haskell, Elixir, Rust, Scala, OCaml, Clojure, Common Lisp, Scheme, and Unison.
 
 ## Architecture
 
 - **Frontend**: React 19 + TypeScript 5.9 + Tailwind CSS 4 + Vite 7
-- **Syntax highlighting**: highlight.js with registered languages for all 8 target languages
+- **Syntax highlighting**: highlight.js with registered languages for all 10 target languages
 - **Routing**: react-router-dom v7 with hash-based routing
 - **Build**: `npm run build` (tsc + vite build)
 
@@ -37,6 +37,8 @@ solutions/
   ocaml/                — 169 .ml files
   clojure/              — 169 .clj files
   lisp/                 — 169 .lisp files
+  scheme/              — 169 .scm files
+  unison/              — 169 .u files
 scripts/
   extract-solutions.ts  — Extracts solution files from solutions.ts registry
 ```
@@ -56,7 +58,7 @@ scripts/
 ### Adding a New Problem
 
 1. Add the problem to `src/data/problems.ts` with `id`, `leetcode` number, `title`, `difficulty`, `acceptance`
-2. Add solutions for all 8 languages in `src/data/solutions.ts` under the problem's ID
+2. Add solutions for all 10 languages in `src/data/solutions.ts` under the problem's ID
 3. Run `npm run extract` to regenerate the individual solution files
 4. The site will automatically pick up the new problem via the data arrays
 

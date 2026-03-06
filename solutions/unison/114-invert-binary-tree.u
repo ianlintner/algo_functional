@@ -1,0 +1,12 @@
+--
+-- Problem 114: Invert Binary Tree (LeetCode 226)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 114
+-- Derived from the functional reference implementation already in the registry.
+data Tree a = Empty | Node a (Tree a) (Tree a)
+
+invertTree : Tree a -> Tree a
+invertTree Empty = Empty
+invertTree (Node v l r) = Node v (invertTree r) (invertTree l)

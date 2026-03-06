@@ -1,0 +1,43 @@
+--
+-- Problem 55: Design In-Memory File System (LeetCode 588)
+-- Difficulty: Hard
+-- Language: Unison
+--
+-- Unison version for problem 55
+-- Derived from the functional reference implementation already in the registry.
+import qualified Data.Map.Strict as Map
+
+data FSNode = FSNode
+  { children : Map.Map String FSNode
+  , content  : String
+  }
+
+emptyNode : FSNode
+emptyNode = FSNode Map.empty ""
+
+navigate : FSNode -> [String] -> FSNode
+navigate = foldl (\node p ->
+  Map.findWithDefault emptyNode p (children node))
+
+insertAt : [String] -> (FSNode -> FSNode) -> FSNode -> FSNode
+insertAt [] f node = f node
+insertAt (p:ps) f node =
+  let child = Map.findWithDefault emptyNode p (children node)
+      updated = insertAt ps f child
+  in node { children = Map.insert p updated (children node) }
+
+ls : FSNode -> String -> [String]
+ls root path =
+  let parts = filter (not . null) (splitOn '/' path)
+      node = navigate root parts
+  in if not (null (content node))
+     then [last parts]
+     else Map.keys (children node)
+
+mkdir : FSNode -> String -> FSNode
+mkdir root path = insertAt (filter (not . null) (splitOn '/' path)) id root
+
+addContent : FSNode -> String -> String -> FSNode
+addContent root path c =
+  insertAt (filter (not . null) (splitOn '/' path))
+           (\n -> n { content = content n ++ c }) root

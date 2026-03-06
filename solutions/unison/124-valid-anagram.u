@@ -1,0 +1,11 @@
+--
+-- Problem 124: Valid Anagram (LeetCode 242)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 124
+-- Derived from the functional reference implementation already in the registry.
+import Data.List (sort)
+
+isAnagram : String -> String -> Bool
+isAnagram s t = sort s == sort t

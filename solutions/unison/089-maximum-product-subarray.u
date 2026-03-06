@@ -1,0 +1,15 @@
+--
+-- Problem 89: Maximum Product Subarray (LeetCode 152)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 89
+-- Derived from the functional reference implementation already in the registry.
+maxProduct : [Int] -> Int
+maxProduct (x:xs) = let (best, _, _) = foldl step (x, x, x) xs in best
+  where
+    step (best, mx, mn) n =
+      let hi = maximum [n, mx * n, mn * n]
+          lo = minimum [n, mx * n, mn * n]
+      in (max best hi, hi, lo)
+maxProduct _ = 0

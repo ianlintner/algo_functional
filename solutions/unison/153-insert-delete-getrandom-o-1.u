@@ -1,0 +1,29 @@
+--
+-- Problem 153: Insert Delete GetRandom O(1) (LeetCode 380)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 153
+-- Derived from the functional reference implementation already in the registry.
+import qualified Data.Map.Strict as Map
+import System.Random (randomRIO)
+
+data RandSet = RandSet (Map.Map Int Int) [Int]
+
+empty : RandSet
+empty = RandSet Map.empty []
+
+insert : Int -> RandSet -> (Bool, RandSet)
+insert val (RandSet m xs)
+  | Map.member val m = (False, RandSet m xs)
+  | otherwise = (True, RandSet (Map.insert val (length xs) m) (xs ++ [val]))
+
+remove : Int -> RandSet -> (Bool, RandSet)
+remove val (RandSet m xs)
+  | not (Map.member val m) = (False, RandSet m xs)
+  | otherwise = let idx = m Map.! val; lastVal = last xs
+                    xs' = init xs; m' = Map.delete val m
+                in if idx < length xs'
+                   then (True, RandSet (Map.insert lastVal idx m')
+                         (take idx xs' ++ [lastVal] ++ drop (idx+1) xs'))
+                   else (True, RandSet m' xs')

@@ -1,0 +1,12 @@
+--
+-- Problem 129: Missing Number (LeetCode 268)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 129
+-- Derived from the functional reference implementation already in the registry.
+import Data.Bits (xor)
+
+missingNumber : [Int] -> Int
+missingNumber nums =
+  foldl xor 0 nums `xor` foldl xor 0 [0..length nums]

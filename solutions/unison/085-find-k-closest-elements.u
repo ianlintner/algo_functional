@@ -1,0 +1,15 @@
+--
+-- Problem 85: Find K Closest Elements (LeetCode 658)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 85
+-- Derived from the functional reference implementation already in the registry.
+findClosestElements : [Int] -> Int -> Int -> [Int]
+findClosestElements arr k x = go 0 (length arr)
+  where
+    v = (arr !!)
+    go lo hi
+      | hi - lo == k = take k (drop lo arr)
+      | abs (v lo - x) <= abs (v (hi-1) - x) = go lo (hi-1)
+      | otherwise = go (lo+1) hi

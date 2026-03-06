@@ -1,0 +1,36 @@
+;; Problem 10: Rotting Oranges (LeetCode 994)
+;; Difficulty: Med
+;; Language: Scheme
+;; 
+;; Scheme version for problem 10
+;; Derived from the closest existing Lisp-family reference implementation.
+(define (oranges-rotting grid)
+  (let* ((rows (length grid))
+         (cols (length (first grid)))
+         (g (make-array (list rows cols)
+              :initial-contents grid))
+         (queue nil) (fresh 0))
+    (dotimes (r rows)
+      (dotimes (c cols)
+        (case (aref g r c)
+          (2 (push (cons r c) queue))
+          (1 (incf fresh)))))
+    (let ((dirs '((-1 . 0) (1 . 0) (0 . -1) (0 . 1)))
+          (time 0))
+      (loop while (and queue (> fresh 0)) do
+        (let ((next-q nil)
+              (size (length queue)))
+          (dotimes (_ size)
+            (let ((pos (pop queue)))
+              (dolist (d dirs)
+                (let ((nr (+ (car pos) (car d)))
+                      (nc (+ (cdr pos) (cdr d))))
+                  (when (and (>= nr 0) (< nr rows)
+                             (>= nc 0) (< nc cols)
+                             (= (aref g nr nc) 1))
+                    (setf (aref g nr nc) 2)
+                    (decf fresh)
+                    (push (cons nr nc) next-q))))))
+          (setf queue next-q)
+          (incf time)))
+      (if (> fresh 0) -1 time))))

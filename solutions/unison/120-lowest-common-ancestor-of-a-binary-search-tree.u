@@ -1,0 +1,15 @@
+--
+-- Problem 120: Lowest Common Ancestor of a Binary Search Tree (LeetCode 235)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 120
+-- Derived from the functional reference implementation already in the registry.
+data BST = BNil | BNode BST Int BST
+
+lcaBST : BST -> Int -> Int -> Optional Int
+lcaBST BNil _ _ = None
+lcaBST (BNode l v r) p q
+  | p < v && q < v = lcaBST l p q
+  | p > v && q > v = lcaBST r p q
+  | otherwise = Some v

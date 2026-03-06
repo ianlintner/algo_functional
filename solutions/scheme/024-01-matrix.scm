@@ -1,0 +1,32 @@
+;; Problem 24: 01 Matrix (LeetCode 542)
+;; Difficulty: Med
+;; Language: Scheme
+;; 
+;; Scheme version for problem 24
+;; Derived from the closest existing Lisp-family reference implementation.
+(define (update-matrix mat)
+  (let* ((rows (length mat))
+         (cols (length (first mat)))
+         (inf (+ rows cols))
+         (dist (make-array (list rows cols))))
+    (dotimes (r rows)
+      (dotimes (c cols)
+        (setf (aref dist r c)
+              (if (zerop (nth c (nth r mat))) 0 inf))))
+    (dotimes (r rows)
+      (dotimes (c cols)
+        (when (> r 0)
+          (setf (aref dist r c)
+                (min (aref dist r c) (1+ (aref dist (1- r) c)))))
+        (when (> c 0)
+          (setf (aref dist r c)
+                (min (aref dist r c) (1+ (aref dist r (1- c))))))))
+    (loop for r from (1- rows) downto 0 do
+      (loop for c from (1- cols) downto 0 do
+        (when (< r (1- rows))
+          (setf (aref dist r c)
+                (min (aref dist r c) (1+ (aref dist (1+ r) c)))))
+        (when (< c (1- cols))
+          (setf (aref dist r c)
+                (min (aref dist r c) (1+ (aref dist r (1+ c))))))))
+    dist))

@@ -1,0 +1,29 @@
+--
+-- Problem 4: Median of Two Sorted Arrays (LeetCode 4)
+-- Difficulty: Hard
+-- Language: Unison
+--
+findMedianSortedArrays : [Int] -> [Int] -> Float
+findMedianSortedArrays nums1 nums2 =
+  let
+    merge xs ys =
+      match (xs, ys) with
+        ([], _) -> ys
+        (_, []) -> xs
+        (x +: xt, y +: yt) ->
+          if x <= y then x +: merge xt ys else y +: merge xs yt
+
+    at values index =
+      match (values, index) with
+        (x +: _, 0) -> x
+        (_ +: rest, n) -> at rest (n - 1)
+        _ -> 0
+
+    merged = merge nums1 nums2
+    n = length merged
+    mid = n / 2
+  in
+    if mod n 2 == 0 then
+      Float.fromInt (at merged (mid - 1) + at merged mid) / 2.0
+    else
+      Float.fromInt (at merged mid)

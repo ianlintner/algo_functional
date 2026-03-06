@@ -1,0 +1,16 @@
+--
+-- Problem 112: Asteroid Collision (LeetCode 735)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 112
+-- Derived from the functional reference implementation already in the registry.
+asteroidCollision : [Int] -> [Int]
+asteroidCollision = reverse . foldl resolve []
+  where
+    resolve [] a = [a]
+    resolve stack@(top:rest) a
+      | a > 0 || top < 0 = a : stack
+      | top == negate a = rest
+      | top < negate a = resolve rest a
+      | otherwise = stack

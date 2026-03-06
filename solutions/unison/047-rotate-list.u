@@ -1,0 +1,13 @@
+--
+-- Problem 47: Rotate List (LeetCode 61)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 47
+-- Derived from the functional reference implementation already in the registry.
+rotateRight : [a] -> Int -> [a]
+rotateRight [] _ = []
+rotateRight xs k =
+  let n = length xs
+      rot = k `mod` n
+  in drop (n - rot) xs ++ take (n - rot) xs

@@ -1,0 +1,21 @@
+--
+-- Problem 145: Odd Even Linked List (LeetCode 328)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 145
+-- Derived from the functional reference implementation already in the registry.
+data ListNode = ListNode Int (Optional ListNode)
+
+oddEvenList : Optional ListNode -> Optional ListNode
+oddEvenList None = None
+oddEvenList head =
+  let collect None _ odds evens = (reverse odds, reverse evens)
+      collect (Some (ListNode v next)) True odds evens =
+        collect next False (v:odds) evens
+      collect (Some (ListNode v next)) False odds evens =
+        collect next True odds (v:evens)
+      (odds, evens) = collect head True [] []
+      build [] = None
+      build (v:vs) = Some (ListNode v (build vs))
+  in build (odds ++ evens)

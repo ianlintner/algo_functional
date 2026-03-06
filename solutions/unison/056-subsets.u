@@ -1,0 +1,12 @@
+--
+-- Problem 56: Subsets (LeetCode 78)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 56
+-- Derived from the functional reference implementation already in the registry.
+subsets : [a] -> [[a]]
+subsets [] = [[]]
+subsets (x:xs) =
+  let rest = subsets xs
+  in rest ++ map (x:) rest

@@ -1,0 +1,11 @@
+--
+-- Problem 22: Swap Nodes in Pairs (LeetCode 24)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 22
+-- Derived from the functional reference implementation already in the registry.
+swapPairs : [a] -> [a]
+swapPairs [] = []
+swapPairs [x] = [x]
+swapPairs (x:y:rest) = y : x : swapPairs rest

@@ -1,0 +1,16 @@
+--
+-- Problem 109: Contains Duplicate (LeetCode 217)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 109
+-- Derived from the functional reference implementation already in the registry.
+import qualified Data.Set as S
+
+containsDuplicate : Ord a => [a] -> Bool
+containsDuplicate = go S.empty
+  where
+    go _ [] = False
+    go seen (x:xs)
+      | S.member x seen = True
+      | otherwise = go (S.insert x seen) xs

@@ -1,0 +1,27 @@
+--
+-- Problem 14: 3Sum Closest (LeetCode 16)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 14
+-- Derived from the functional reference implementation already in the registry.
+import Data.List (sort)
+
+threeSumClosest : [Int] -> Int -> Int
+threeSumClosest nums target =
+  let sorted = sort nums
+      arr = listToArray sorted
+      n = length sorted
+      go i l r closest
+        | l >= r = closest
+        | otherwise =
+            let s = arr !! i + arr !! l + arr !! r
+                better = if abs (s - target) < abs (closest - target) then s else closest
+            in if s < target then go i (l+1) r better
+               else if s > target then go i l (r-1) better
+               else s
+      result = foldl (\best i -> go i (i+1) (n-1) best) maxBound [0..n-1]
+  in result
+  where
+    listToArray = map snd . zip [0..]
+    maxBound = 10^9

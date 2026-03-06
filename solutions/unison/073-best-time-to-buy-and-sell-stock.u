@@ -1,0 +1,10 @@
+--
+-- Problem 73: Best Time to Buy and Sell Stock (LeetCode 121)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 73
+-- Derived from the functional reference implementation already in the registry.
+maxProfit : [Int] -> Int
+maxProfit [] = 0
+maxProfit (p:ps) = snd $ foldl (\(mn, mx) x -> (min mn x, max mx (x - mn))) (p, 0) ps

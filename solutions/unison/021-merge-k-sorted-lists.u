@@ -1,0 +1,15 @@
+--
+-- Problem 21: Merge k Sorted Lists (LeetCode 23)
+-- Difficulty: Hard
+-- Language: Unison
+--
+-- Unison version for problem 21
+-- Derived from the functional reference implementation already in the registry.
+mergeKLists : Ord a => [[a]] -> [a]
+mergeKLists = foldl mergeTwoSorted []
+  where
+    mergeTwoSorted [] ys = ys
+    mergeTwoSorted xs [] = xs
+    mergeTwoSorted (x:xs) (y:ys)
+      | x <= y   = x : mergeTwoSorted xs (y:ys)
+      | otherwise = y : mergeTwoSorted (x:xs) ys

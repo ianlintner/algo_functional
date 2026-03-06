@@ -1,0 +1,36 @@
+;; Problem 107: Word Search II (LeetCode 212)
+;; Difficulty: Hard
+;; Language: Scheme
+;; 
+;; Scheme version for problem 107
+;; Derived from the closest existing Lisp-family reference implementation.
+(define (find-words board words)
+  (let ((trie (make-hash-table)))
+    (labels ((ins (node w i)
+               (if (= i (length w)) (setf (gethash :word node) w)
+                 (let ((ch (or (gethash :ch node) (make-hash-table))))
+                   (setf (gethash :ch node) ch)
+                   (unless (gethash (char w i) ch)
+                     (setf (gethash (char w i) ch) (make-hash-table)))
+                   (ins (gethash (char w i) ch) w (1+ i))))))
+      (dolist (w words) (ins trie w 0)))
+    (let ((rows (length board)) (cols (length (car board)))
+          (found (make-hash-table :test #'equal)))
+      (labels ((at (r c) (nth c (nth r board)))
+               (dfs (r c node seen)
+                 (when (and (>= r 0) (< r rows) (>= c 0) (< c cols)
+                            (not (gethash (cons r c) seen)))
+                   (let* ((ch-map (gethash :ch node))
+                          (next (and ch-map (gethash (at r c) ch-map))))
+                     (when next
+                       (let ((w (gethash :word next)))
+                         (when w (setf (gethash w found) t)))
+                       (setf (gethash (cons r c) seen) t)
+                       (dolist (d '((-1 0)(1 0)(0 -1)(0 1)))
+                         (dfs (+ r (car d)) (+ c (cadr d)) next seen))
+                       (remhash (cons r c) seen))))))
+        (dotimes (r rows)
+          (dotimes (c cols)
+            (dfs r c trie (make-hash-table :test #'equal)))))
+      (let (result)
+        (maphash (lambda (k _) (push k result)) found) result))))

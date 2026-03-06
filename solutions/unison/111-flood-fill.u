@@ -1,0 +1,23 @@
+--
+-- Problem 111: Flood Fill (LeetCode 733)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 111
+-- Derived from the functional reference implementation already in the registry.
+floodFill : [[Int]] -> Int -> Int -> Int -> [[Int]]
+floodFill image sr sc color
+  | orig == color = image
+  | otherwise = fill image sr sc
+  where
+    rows = length image; cols = length (head image)
+    orig = (image !! sr) !! sc
+    setAt img r c v = zipWith (\row ri ->
+      if ri == r then zipWith (\cell ci ->
+        if ci == c then v else cell) row [0..] else row) img [0..]
+    fill img r c
+      | r < 0 || r >= rows || c < 0 || c >= cols = img
+      | (img !! r) !! c /= orig = img
+      | otherwise = foldl (\i (dr,dc) -> fill i (r+dr) (c+dc))
+                          (setAt img r c color)
+                          [(-1,0),(1,0),(0,-1),(0,1)]

@@ -1,0 +1,22 @@
+--
+-- Problem 106: Design Add and Search Words Data Structure (LeetCode 211)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 106
+-- Derived from the functional reference implementation already in the registry.
+import qualified Data.Map as M
+data WDict = WDict (M.Map Char WDict) Bool
+
+emptyDict : WDict
+emptyDict = WDict M.empty False
+
+addWord : String -> WDict -> WDict
+addWord [] (WDict m _) = WDict m True
+addWord (c:cs) (WDict m e) =
+  WDict (M.alter (Some . addWord cs . maybe emptyDict id) c m) e
+
+searchWord : String -> WDict -> Bool
+searchWord [] (WDict _ e) = e
+searchWord ('.':cs) (WDict m _) = any (searchWord cs) (M.elems m)
+searchWord (c:cs) (WDict m _) = maybe False (searchWord cs) (M.lookup c m)

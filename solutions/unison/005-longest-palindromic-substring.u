@@ -1,0 +1,28 @@
+--
+-- Problem 5: Longest Palindromic Substring (LeetCode 5)
+-- Difficulty: Med
+-- Language: Unison
+--
+longestPalindrome : Text -> Text
+longestPalindrome s =
+  let
+    n = Text.size s
+
+    expand left right =
+      if left < 0 || right >= n || Text.at s left != Text.at s right then
+        Text.slice s (left + 1) right
+      else
+        expand (left - 1) (right + 1)
+
+    go index best =
+      if index >= n then best
+      else
+        let
+          odd = expand index index
+          even = expand index (index + 1)
+          candidate = if Text.size odd >= Text.size even then odd else even
+          nextBest = if Text.size candidate > Text.size best then candidate else best
+        in
+          go (index + 1) nextBest
+  in
+    go 0 ""

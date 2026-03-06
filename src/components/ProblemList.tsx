@@ -48,12 +48,12 @@ export default function ProblemList() {
         </h1>
         <p className="mt-3 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
           All 169 Grind LeetCode problems solved using purely functional
-          patterns across 8 languages.
+          patterns across {LANGUAGES.length} languages.
         </p>
         <div className="flex justify-center gap-6 mt-6">
           {[
             { num: "169", label: "Problems" },
-            { num: "8", label: "Languages" },
+            { num: String(LANGUAGES.length), label: "Languages" },
             { num: String(solvedCount), label: "Solved" },
             { num: String(totalSolutions), label: "Solutions" },
           ].map((s) => (

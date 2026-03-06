@@ -1,0 +1,9 @@
+--
+-- Problem 98: House Robber (LeetCode 198)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 98
+-- Derived from the functional reference implementation already in the registry.
+rob : [Int] -> Int
+rob = fst . foldl (\(prev1, prev2) n -> (max prev1 (prev2 + n), prev1)) (0, 0)

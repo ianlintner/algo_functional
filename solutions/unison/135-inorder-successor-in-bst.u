@@ -1,0 +1,16 @@
+--
+-- Problem 135: Inorder Successor in BST (LeetCode 285)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 135
+-- Derived from the functional reference implementation already in the registry.
+data Tree a = Empty | Node a (Tree a) (Tree a)
+
+inorderSuccessor : Ord a => Tree a -> a -> Optional a
+inorderSuccessor Empty _ = None
+inorderSuccessor (Node v left right) p
+  | v > p     = case inorderSuccessor left p of
+                  None -> Some v
+                  result  -> result
+  | otherwise = inorderSuccessor right p

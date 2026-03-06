@@ -1,0 +1,13 @@
+--
+-- Problem 23: Reverse Nodes in k-Group (LeetCode 25)
+-- Difficulty: Hard
+-- Language: Unison
+--
+-- Unison version for problem 23
+-- Derived from the functional reference implementation already in the registry.
+reverseKGroup : [a] -> Int -> [a]
+reverseKGroup xs k
+  | length group < k = xs
+  | otherwise = reverse group ++ reverseKGroup rest k
+  where
+    (group, rest) = splitAt k xs

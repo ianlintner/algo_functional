@@ -1,0 +1,13 @@
+--
+-- Problem 41: Maximum Subarray (LeetCode 53)
+-- Difficulty: Med
+-- Language: Unison
+--
+-- Unison version for problem 41
+-- Derived from the functional reference implementation already in the registry.
+maxSubArray : [Int] -> Int
+maxSubArray [] = error "empty"
+maxSubArray (x:xs) =
+  fst $ foldl (\(best, cur) n ->
+    let cur' = max n (cur + n)
+    in (max best cur', cur')) (x, x) xs

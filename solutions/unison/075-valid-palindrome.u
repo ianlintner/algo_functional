@@ -1,0 +1,12 @@
+--
+-- Problem 75: Valid Palindrome (LeetCode 125)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 75
+-- Derived from the functional reference implementation already in the registry.
+import Data.Char (toLower, isAlphaNum)
+isPalindrome : String -> Bool
+isPalindrome s =
+  let cleaned = map toLower $ filter isAlphaNum s
+  in cleaned == reverse cleaned

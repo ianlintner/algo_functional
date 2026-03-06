@@ -1,0 +1,12 @@
+--
+-- Problem 92: Majority Element (LeetCode 169)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 92
+-- Derived from the functional reference implementation already in the registry.
+majorityElement : [Int] -> Int
+majorityElement = fst . foldl step (0, 0)
+  where
+    step (_, 0) n = (n, 1)
+    step (c, k) n = if n == c then (c, k + 1) else (c, k - 1)

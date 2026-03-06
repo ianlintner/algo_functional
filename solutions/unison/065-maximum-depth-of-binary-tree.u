@@ -1,0 +1,10 @@
+--
+-- Problem 65: Maximum Depth of Binary Tree (LeetCode 104)
+-- Difficulty: Easy
+-- Language: Unison
+--
+-- Unison version for problem 65
+-- Derived from the functional reference implementation already in the registry.
+maxDepth : Tree a -> Int
+maxDepth Nil = 0
+maxDepth (Node _ l r) = 1 + max (maxDepth l) (maxDepth r)

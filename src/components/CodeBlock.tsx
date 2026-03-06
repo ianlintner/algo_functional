@@ -9,6 +9,7 @@ import scala from "highlight.js/lib/languages/scala";
 import ocaml from "highlight.js/lib/languages/ocaml";
 import clojure from "highlight.js/lib/languages/clojure";
 import lisp from "highlight.js/lib/languages/lisp";
+import scheme from "highlight.js/lib/languages/scheme";
 
 // Register languages once
 hljs.registerLanguage("typescript", typescript);
@@ -19,6 +20,7 @@ hljs.registerLanguage("scala", scala);
 hljs.registerLanguage("ocaml", ocaml);
 hljs.registerLanguage("clojure", clojure);
 hljs.registerLanguage("lisp", lisp);
+hljs.registerLanguage("scheme", scheme);
 
 const langMap: Record<Language, string> = {
   TypeScript: "typescript",
@@ -29,6 +31,8 @@ const langMap: Record<Language, string> = {
   OCaml: "ocaml",
   Clojure: "clojure",
   Lisp: "lisp",
+  Scheme: "scheme",
+  Unison: "haskell",
 };
 
 interface Props {
