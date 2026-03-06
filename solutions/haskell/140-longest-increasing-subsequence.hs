@@ -1,0 +1,21 @@
+{-
+  Problem 140: Longest Increasing Subsequence (LeetCode 300)
+  Difficulty: Med
+  Language: Haskell
+-}
+import Data.Sequence (Seq, (|>), index, update, empty)
+import qualified Data.Sequence as Seq
+
+lengthOfLIS :: [Int] -> Int
+lengthOfLIS nums = Seq.length (foldl go Seq.empty nums)
+  where
+    go tails num =
+      let pos = bisect tails num 0 (Seq.length tails)
+      in if pos == Seq.length tails
+         then tails |> num
+         else update pos num tails
+    bisect tails target lo hi
+      | lo >= hi  = lo
+      | index tails mid < target = bisect tails target (mid + 1) hi
+      | otherwise = bisect tails target lo mid
+      where mid = lo + div (hi - lo) 2

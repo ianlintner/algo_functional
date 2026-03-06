@@ -1,0 +1,23 @@
+{-
+  Problem 58: Largest Rectangle in Histogram (LeetCode 84)
+  Difficulty: Hard
+  Language: Haskell
+-}
+largestRectangleArea :: [Int] -> Int
+largestRectangleArea hs = go 0 [] 0
+  where
+    n = length hs
+    go idx stack maxA
+      | idx == n = clean stack maxA
+      | not (null stack) && (hs !! last stack) > (hs !! idx) =
+          let top = last stack
+              rest = init stack
+              w = if null rest then idx else idx - last rest - 1
+          in go idx rest (max maxA ((hs !! top) * w))
+      | otherwise = go (idx + 1) (stack ++ [idx]) maxA
+    clean [] maxA = maxA
+    clean stack maxA =
+      let top = last stack
+          rest = init stack
+          w = if null rest then n else n - last rest - 1
+      in clean rest (max maxA ((hs !! top) * w))

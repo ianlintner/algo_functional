@@ -1,0 +1,31 @@
+{-
+  Problem 72: Smallest Range Covering Elements from K Lists (LeetCode 632)
+  Difficulty: Hard
+  Language: Haskell
+-}
+import Data.List (sortBy)
+import Data.Ord (comparing)
+import qualified Data.Map.Strict as M
+
+smallestRange :: [[Int]] -> (Int, Int)
+smallestRange lists =
+  let tagged = concatMap (\(i, xs) -> map (\x -> (x, i)) (zip [0..] lists))
+               (zip [0..] lists)
+      sorted = sortBy (comparing fst) $ concatMap (\(i,xs) -> map (,i) xs) (zip [0..] lists)
+      k = length lists
+      go [] _ _ _ best = best
+      go ((v,g):rest) left counts best =
+        let counts' = M.insertWith (+) g 1 counts
+            covered = M.size (M.filter (>0) counts')
+            shrink l cs b
+              | M.size (M.filter (>0) cs) < k = (l, cs, b)
+              | otherwise =
+                  let (lv, lg) = sorted !! l
+                      nb = if v - lv < snd b - fst b then (lv, v) else b
+                      cs' = M.adjust (subtract 1) lg cs
+                  in shrink (l+1) cs' nb
+            (left', counts'', best') = if covered >= k
+              then shrink left counts' best
+              else (left, counts', best)
+        in go rest left' counts'' best'
+  in go sorted 0 M.empty (minBound, maxBound)

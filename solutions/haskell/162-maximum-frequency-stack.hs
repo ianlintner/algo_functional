@@ -1,0 +1,27 @@
+{-
+  Problem 162: Maximum Frequency Stack (LeetCode 895)
+  Difficulty: Hard
+  Language: Haskell
+-}
+import qualified Data.Map.Strict as Map
+
+type FreqStack = (Map.Map Int Int, Map.Map Int [Int], Int)
+
+empty :: FreqStack
+empty = (Map.empty, Map.empty, 0)
+
+push :: Int -> FreqStack -> FreqStack
+push val (freq, group, maxF) =
+  let f = maybe 1 (+1) (Map.lookup val freq)
+      freq' = Map.insert val f freq
+      group' = Map.insertWith (++) f [val] group
+  in (freq', group', max maxF f)
+
+pop :: FreqStack -> (Int, FreqStack)
+pop (freq, group, maxF) =
+  let (val:rest) = reverse $ group Map.! maxF
+      group' = if null rest then Map.delete maxF group
+               else Map.insert maxF (reverse rest) group
+      maxF' = if null rest then maxF - 1 else maxF
+      freq' = Map.adjust (subtract 1) val freq
+  in (val, (freq', group', maxF'))

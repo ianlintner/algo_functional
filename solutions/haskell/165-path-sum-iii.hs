@@ -1,0 +1,18 @@
+{-
+  Problem 165: Path Sum III (LeetCode 437)
+  Difficulty: Med
+  Language: Haskell
+-}
+import qualified Data.Map.Strict as Map
+
+data Tree = Nil | Node Int Tree Tree
+
+pathSum :: Tree -> Int -> Int
+pathSum root target =
+  let dfs Nil _ _ = 0
+      dfs (Node v l r) prefix curr =
+        let s = curr + v
+            count = Map.findWithDefault 0 (s - target) prefix
+            prefix' = Map.insertWith (+) s 1 prefix
+        in count + dfs l prefix' s + dfs r prefix' s
+  in dfs root (Map.singleton 0 1) 0

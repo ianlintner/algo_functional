@@ -1,0 +1,21 @@
+{-
+  Problem 100: Number of Islands (LeetCode 200)
+  Difficulty: Med
+  Language: Haskell
+-}
+import qualified Data.Set as S
+
+numIslands :: [[Char]] -> Int
+numIslands grid = fst $ foldl checkCell (0, S.empty) coords
+  where
+    rows = length grid; cols = length (head grid)
+    coords = [(r, c) | r <- [0..rows-1], c <- [0..cols-1]]
+    at (r, c) = (grid !! r) !! c
+    flood (r, c) vis
+      | r < 0 || r >= rows || c < 0 || c >= cols = vis
+      | at (r, c) /= '1' || S.member (r, c) vis = vis
+      | otherwise = foldl (\v d -> flood d v) (S.insert (r, c) vis)
+                      [(r-1,c),(r+1,c),(r,c-1),(r,c+1)]
+    checkCell (cnt, vis) pos
+      | at pos /= '1' || S.member pos vis = (cnt, vis)
+      | otherwise = (cnt + 1, flood pos vis)

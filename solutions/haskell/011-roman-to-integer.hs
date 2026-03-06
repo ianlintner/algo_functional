@@ -1,0 +1,15 @@
+{-
+  Problem 11: Roman to Integer (LeetCode 13)
+  Difficulty: Easy
+  Language: Haskell
+-}
+import qualified Data.Map as Map
+
+romanToInt :: String -> Int
+romanToInt s = fst $ foldr step (0, 0) s
+  where
+    vals = Map.fromList [('I',1),('V',5),('X',10),('L',50),
+                         ('C',100),('D',500),('M',1000)]
+    step ch (total, prev) =
+      let v = Map.findWithDefault 0 ch vals
+      in if v < prev then (total - v, v) else (total + v, v)

@@ -1,0 +1,22 @@
+{-
+  Problem 13: 3Sum (LeetCode 15)
+  Difficulty: Med
+  Language: Haskell
+-}
+import Data.List (sort, nub)
+
+threeSum :: [Int] -> [[Int]]
+threeSum nums = nub $ go sorted
+  where
+    sorted = sort nums
+    go [] = []
+    go (x:xs) = map (x:) (twoSum xs (-x)) ++ go (dropWhile (==x) xs)
+    twoSum xs target = go' xs (reverse xs) []
+      where
+        go' [] _ acc = acc
+        go' _ [] acc = acc
+        go' (a:as') (b:bs') acc
+          | a >= b = acc
+          | a + b < target = go' as' (b:bs') acc
+          | a + b > target = go' (a:as') bs' acc
+          | otherwise = go' (dropWhile (==a) as') bs' ([a,b]:acc)

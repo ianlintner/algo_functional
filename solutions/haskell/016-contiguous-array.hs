@@ -1,0 +1,19 @@
+{-
+  Problem 16: Contiguous Array (LeetCode 525)
+  Difficulty: Med
+  Language: Haskell
+-}
+import qualified Data.Map.Strict as Map
+
+findMaxLength :: [Int] -> Int
+findMaxLength nums =
+  let (_, _, result) = foldl step (Map.empty, 0, 0) (zip [0..] nums)
+  in result
+  where
+    step (seen, count, best) (i, num) =
+      let newCount = count + if num == 1 then 1 else -1
+      in if newCount == 0
+         then (seen, newCount, i + 1)
+         else case Map.lookup newCount seen of
+           Just j  -> (seen, newCount, max best (i - j))
+           Nothing -> (Map.insert newCount i seen, newCount, best)

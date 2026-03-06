@@ -1,0 +1,25 @@
+{-
+  Problem 161: Pacific Atlantic Water Flow (LeetCode 417)
+  Difficulty: Med
+  Language: Haskell
+-}
+import qualified Data.Set as Set
+
+pacificAtlantic :: [[Int]] -> [(Int, Int)]
+pacificAtlantic heights =
+  let rows = length heights; cols = length (head heights)
+      get r c = (heights !! r) !! c
+      dirs = [(1,0),(-1,0),(0,1),(0,-1)]
+      dfs visited (r, c) =
+        let visited' = Set.insert (r, c) visited
+        in foldl (\v (dr, dc) ->
+          let nr = r + dr; nc = c + dc
+          in if nr >= 0 && nr < rows && nc >= 0 && nc < cols
+                && not (Set.member (nr, nc) v)
+                && get nr nc >= get r c
+             then dfs v (nr, nc) else v) visited' dirs
+      pacStarts = [(r, 0) | r <- [0..rows-1]] ++ [(0, c) | c <- [0..cols-1]]
+      atlStarts = [(r, cols-1) | r <- [0..rows-1]] ++ [(rows-1, c) | c <- [0..cols-1]]
+      pac = foldl dfs Set.empty pacStarts
+      atl = foldl dfs Set.empty atlStarts
+  in Set.toList (Set.intersection pac atl)

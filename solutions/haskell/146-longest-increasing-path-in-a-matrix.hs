@@ -1,0 +1,19 @@
+{-
+  Problem 146: Longest Increasing Path in a Matrix (LeetCode 329)
+  Difficulty: Hard
+  Language: Haskell
+-}
+import qualified Data.Map.Strict as Map
+import Data.Array
+
+longestIncreasingPath :: [[Int]] -> Int
+longestIncreasingPath mat = maximum $ Map.elems memo
+  where
+    rows = length mat; cols = length (head mat)
+    arr = listArray ((0,0),(rows-1,cols-1)) [mat !! r !! c | r <- [0..rows-1], c <- [0..cols-1]]
+    memo = Map.fromList [((r,c), dfs r c) | r <- [0..rows-1], c <- [0..cols-1]]
+    dfs r c = 1 + maximum (0 : [memo Map.! (nr,nc) |
+      (dr,dc) <- [(0,1),(0,-1),(1,0),(-1,0)],
+      let nr = r+dr; nc = c+dc,
+      nr >= 0, nr < rows, nc >= 0, nc < cols,
+      arr ! (nr,nc) > arr ! (r,c)])

@@ -1,0 +1,10 @@
+;; Problem 35: Permutations (LeetCode 46)
+;; Difficulty: Med
+;; Language: Lisp
+;; 
+(defun permute (nums)
+  (if (null nums) '(())
+    (mapcan (lambda (n)
+              (mapcar (lambda (p) (cons n p))
+                      (permute (remove n nums :count 1))))
+            nums)))

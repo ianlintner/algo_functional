@@ -1,0 +1,23 @@
+{-
+  Problem 27: Search in Rotated Sorted Array (LeetCode 33)
+  Difficulty: Med
+  Language: Haskell
+-}
+import Data.Vector (Vector, (!))
+import qualified Data.Vector as V
+
+search :: Vector Int -> Int -> Int
+search nums target = go 0 (V.length nums - 1)
+  where
+    go lo hi
+      | lo > hi        = -1
+      | nums ! mid == target = mid
+      | nums ! lo <= nums ! mid =
+          if target >= nums ! lo && target < nums ! mid
+          then go lo (mid - 1)
+          else go (mid + 1) hi
+      | otherwise =
+          if target > nums ! mid && target <= nums ! hi
+          then go (mid + 1) hi
+          else go lo (mid - 1)
+      where mid = (lo + hi) `div` 2

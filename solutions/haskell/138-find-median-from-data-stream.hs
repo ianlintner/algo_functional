@@ -1,0 +1,28 @@
+{-
+  Problem 138: Find Median from Data Stream (LeetCode 295)
+  Difficulty: Hard
+  Language: Haskell
+-}
+import Data.List (sort, insertBy)
+
+data MedianState = MS [Int] [Int] -- lo (max-heap desc), hi (min-heap asc)
+
+empty :: MedianState
+empty = MS [] []
+
+addNum :: Int -> MedianState -> MedianState
+addNum x (MS lo hi)
+  | null lo || x <= last lo = balance (MS (sort (x:lo)) hi)
+  | otherwise               = balance (MS lo (insertAsc x hi))
+  where
+    insertAsc v [] = [v]
+    insertAsc v (h:t) = if v <= h then v:h:t else h : insertAsc v t
+    balance (MS lo' hi')
+      | length lo' > length hi' + 1 = MS (init lo') (last lo' : hi')
+      | length hi' > length lo'     = MS (lo' ++ [head hi']) (tail hi')
+      | otherwise                   = MS lo' hi'
+
+findMedian :: MedianState -> Double
+findMedian (MS lo hi)
+  | length lo > length hi = fromIntegral (last lo)
+  | otherwise = fromIntegral (last lo + head hi) / 2.0

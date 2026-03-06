@@ -1,0 +1,15 @@
+{-
+  Problem 52: Search a 2D Matrix (LeetCode 74)
+  Difficulty: Med
+  Language: Haskell
+-}
+searchMatrix :: [[Int]] -> Int -> Bool
+searchMatrix matrix target =
+  let flat = concat matrix
+      go lo hi
+        | lo > hi = False
+        | flat !! mid == target = True
+        | flat !! mid < target = go (mid + 1) hi
+        | otherwise = go lo (mid - 1)
+        where mid = (lo + hi) `div` 2
+  in go 0 (length flat - 1)

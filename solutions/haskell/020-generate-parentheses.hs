@@ -1,0 +1,13 @@
+{-
+  Problem 20: Generate Parentheses (LeetCode 22)
+  Difficulty: Med
+  Language: Haskell
+-}
+generateParenthesis :: Int -> [String]
+generateParenthesis n = go n 0 0 ""
+  where
+    go n open close current
+      | length current == 2 * n = [current]
+      | otherwise =
+          (if open < n then go n (open + 1) close (current ++ "(") else []) ++
+          (if close < open then go n open (close + 1) (current ++ ")") else [])

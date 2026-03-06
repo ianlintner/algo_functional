@@ -1,0 +1,27 @@
+{-
+  Problem 141: Minimum Height Trees (LeetCode 310)
+  Difficulty: Med
+  Language: Haskell
+-}
+import qualified Data.Map.Strict as Map
+import qualified Data.Set as Set
+
+findMinHeightTrees :: Int -> [(Int,Int)] -> [Int]
+findMinHeightTrees 1 _ = [0]
+findMinHeightTrees n edges =
+  let adj = foldl (\g (u,v) ->
+        Map.insertWith Set.union u (Set.singleton v) $
+        Map.insertWith Set.union v (Set.singleton u) g)
+        Map.empty edges
+      trim leaves remaining g
+        | remaining <= 2 = leaves
+        | otherwise =
+          let (newLeaves, g') = foldl (\(nl, g0) leaf ->
+                let nbs = Set.toList (g0 Map.! leaf)
+                    g1 = foldl (\ga nb -> Map.adjust (Set.delete leaf) nb ga)
+                         g0 nbs
+                    nl' = filter (\nb -> Set.size (g1 Map.! nb) == 1) nbs
+                in (nl ++ nl', g1)) ([], g) leaves
+          in trim newLeaves (remaining - length leaves) g'
+      initLeaves = Map.keys (Map.filter (\s -> Set.size s == 1) adj)
+  in trim initLeaves n adj

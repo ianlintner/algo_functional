@@ -1,0 +1,23 @@
+{-
+  Problem 103: Implement Trie (Prefix Tree) (LeetCode 208)
+  Difficulty: Med
+  Language: Haskell
+-}
+import qualified Data.Map as M
+data Trie = Trie (M.Map Char Trie) Bool
+
+emptyTrie :: Trie
+emptyTrie = Trie M.empty False
+
+trieInsert :: String -> Trie -> Trie
+trieInsert [] (Trie m _) = Trie m True
+trieInsert (c:cs) (Trie m e) =
+  Trie (M.alter (Just . trieInsert cs . maybe emptyTrie id) c m) e
+
+trieSearch :: String -> Trie -> Bool
+trieSearch [] (Trie _ e) = e
+trieSearch (c:cs) (Trie m _) = maybe False (trieSearch cs) (M.lookup c m)
+
+startsWith :: String -> Trie -> Bool
+startsWith [] _ = True
+startsWith (c:cs) (Trie m _) = maybe False (startsWith cs) (M.lookup c m)

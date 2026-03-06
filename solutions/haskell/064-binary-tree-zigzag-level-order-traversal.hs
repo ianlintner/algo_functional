@@ -1,0 +1,19 @@
+{-
+  Problem 64: Binary Tree Zigzag Level Order Traversal (LeetCode 103)
+  Difficulty: Med
+  Language: Haskell
+-}
+zigzagLevelOrder :: Tree a -> [[a]]
+zigzagLevelOrder Nil = []
+zigzagLevelOrder root = go [root] 0
+  where
+    go [] _ = []
+    go level n =
+      let vals = map nodeVal level
+          row = if even n then vals else reverse vals
+          next = concatMap children level
+      in row : go next (n + 1)
+    nodeVal (Node v _ _) = v
+    children (Node _ l r) = filter notNil [l, r]
+    notNil Nil = False
+    notNil _   = True

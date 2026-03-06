@@ -1,0 +1,24 @@
+{-
+  Problem 84: LRU Cache (LeetCode 146)
+  Difficulty: Med
+  Language: Haskell
+-}
+import qualified Data.Map as M
+
+data LRU k v = LRU Int [k] (M.Map k v) deriving Show
+
+lruNew :: Int -> LRU k v
+lruNew cap = LRU cap [] M.empty
+
+lruGet :: Ord k => k -> LRU k v -> (Maybe v, LRU k v)
+lruGet key (LRU cap order m) = case M.lookup key m of
+  Nothing -> (Nothing, LRU cap order m)
+  Just v  -> (Just v, LRU cap (filter (/= key) order ++ [key]) m)
+
+lruPut :: Ord k => k -> v -> LRU k v -> LRU k v
+lruPut key val (LRU cap order m) =
+  let order' = filter (/= key) order ++ [key]
+      m' = M.insert key val m
+  in if length order' > cap
+     then LRU cap (tail order') (M.delete (head order') m')
+     else LRU cap order' m'

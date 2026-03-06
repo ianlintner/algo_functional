@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-primary: #6200ee;
+    --color-primary-light: #7c4dff;
+    --color-secondary: #03dac6;
+    --color-easy: #00a36c;
+    --color-med: #ff9800;
+    --color-hard: #e53935;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .badge-Easy {
+    @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400;
+  }
+  .badge-Med {
+    @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400;
+  }
+  .badge-Hard {
+    @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
+  }
+}
+
+/* Code block wrapper */
+.code-block-wrapper {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+/* Code block styling */
+pre.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  overflow-x: auto;
+  margin: 0;
+  padding: 0.75rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  font-family: "SF Mono", "Fira Code", "JetBrains Mono", monospace;
+}
+
+.code-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.code-line:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.code-line-number {
+  user-select: none;
+  -webkit-user-select: none;
+  text-align: right;
+  padding: 0 1rem 0 1rem;
+  color: #585b70;
+  font-size: 0.75rem;
+  vertical-align: top;
+  width: 1%;
+  white-space: nowrap;
+  border-right: 1px solid #313244;
+}
+
+.code-line-content {
+  padding: 0 1rem;
+  white-space: pre;
+}
+
+/* highlight.js Catppuccin-inspired theme overrides */
+pre.code-block .hljs-keyword,
+pre.code-block .hljs-selector-tag,
+pre.code-block .hljs-built_in,
+pre.code-block .hljs-name {
+  color: #cba6f7;
+  font-weight: 600;
+}
+pre.code-block .hljs-type,
+pre.code-block .hljs-class,
+pre.code-block .hljs-title,
+pre.code-block .hljs-title\.class_,
+pre.code-block .hljs-title\.function_ {
+  color: #89b4fa;
+}
+pre.code-block .hljs-string,
+pre.code-block .hljs-regexp,
+pre.code-block .hljs-addition {
+  color: #a6e3a1;
+}
+pre.code-block .hljs-comment,
+pre.code-block .hljs-quote,
+pre.code-block .hljs-meta {
+  color: #6c7086;
+  font-style: italic;
+}
+pre.code-block .hljs-number,
+pre.code-block .hljs-literal {
+  color: #fab387;
+}
+pre.code-block .hljs-function,
+pre.code-block .hljs-params {
+  color: #89dceb;
+}
+pre.code-block .hljs-variable,
+pre.code-block .hljs-template-variable {
+  color: #f38ba8;
+}
+pre.code-block .hljs-attr,
+pre.code-block .hljs-attribute {
+  color: #f9e2af;
+}
+pre.code-block .hljs-symbol,
+pre.code-block .hljs-bullet {
+  color: #f5c2e7;
+}
+pre.code-block .hljs-deletion {
+  color: #e53935;
+}
+pre.code-block .hljs-operator,
+pre.code-block .hljs-punctuation {
+  color: #94e2d5;
+}
+pre.code-block .hljs-section {
+  color: #89b4fa;
+  font-weight: bold;
+}
+pre.code-block .hljs-emphasis {
+  font-style: italic;
+}
+pre.code-block .hljs-strong {
+  font-weight: bold;
+}

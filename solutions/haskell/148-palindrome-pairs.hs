@@ -1,0 +1,22 @@
+{-
+  Problem 148: Palindrome Pairs (LeetCode 336)
+  Difficulty: Hard
+  Language: Haskell
+-}
+import qualified Data.Map.Strict as Map
+
+palindromePairs :: [String] -> [[Int]]
+palindromePairs words =
+  let mp = Map.fromList (zip words [0..])
+      isPalin s = s == reverse s
+      check (w, i) = concatMap (\j ->
+        let (l, r) = splitAt j w
+            revL = reverse l; revR = reverse r
+            a = if isPalin r then case Map.lookup revL mp of
+                  Just k | k /= i -> [[i, k]]; _ -> []
+                else []
+            b = if j > 0 && isPalin l then case Map.lookup revR mp of
+                  Just k | k /= i -> [[k, i]]; _ -> []
+                else []
+        in a ++ b) [0..length w]
+  in concatMap check (zip words [0..])
