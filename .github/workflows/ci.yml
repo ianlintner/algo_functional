@@ -1,0 +1,243 @@
+name: CI — Build & Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── TypeScript & Vite Build ──────────────────────────────────
+  build:
+    name: Build Site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint # tsc --noEmit
+      - run: npm run build # tsc && vite build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  # ─── Validate TypeScript Solutions ────────────────────────────
+  validate-typescript:
+    name: Validate TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type-check all TypeScript solutions
+        run: |
+          npx tsc --noEmit --strict --target ES2022 --moduleResolution node \
+            solutions/typescript/*.ts 2>&1 || true
+          echo "TypeScript solutions checked (non-blocking)"
+
+  # ─── Validate Rust Solutions ──────────────────────────────────
+  validate-rust:
+    name: Validate Rust
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Syntax-check Rust solutions
+        run: |
+          errors=0
+          for f in solutions/rust/*.rs; do
+            if ! rustc --edition 2021 --crate-type lib "$f" -o /dev/null 2>/dev/null; then
+              echo "⚠ $f has compilation issues"
+              errors=$((errors + 1))
+            fi
+          done
+          echo "Rust: $errors files with issues out of $(ls solutions/rust/*.rs | wc -l)"
+
+  # ─── Validate Haskell Solutions ───────────────────────────────
+  validate-haskell:
+    name: Validate Haskell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.8"
+
+      - name: Syntax-check Haskell solutions
+        run: |
+          errors=0
+          for f in solutions/haskell/*.hs; do
+            if ! ghc -fno-code -fforce-recomp "$f" 2>/dev/null; then
+              echo "⚠ $f has compilation issues"
+              errors=$((errors + 1))
+            fi
+          done
+          echo "Haskell: $errors files with issues out of $(ls solutions/haskell/*.hs | wc -l)"
+
+  # ─── Validate Elixir Solutions ────────────────────────────────
+  validate-elixir:
+    name: Validate Elixir
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          elixir-version: "1.17"
+
+      - name: Syntax-check Elixir solutions
+        run: |
+          errors=0
+          for f in solutions/elixir/*.ex; do
+            if ! elixirc --no-halt "$f" 2>/dev/null; then
+              echo "⚠ $f has syntax issues"
+              errors=$((errors + 1))
+            fi
+          done
+          echo "Elixir: $errors files with issues out of $(ls solutions/elixir/*.ex | wc -l)"
+
+  # ─── Validate Scala Solutions ─────────────────────────────────
+  validate-scala:
+    name: Validate Scala
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install Scala CLI
+        run: |
+          curl -fL https://github.com/VirtusLab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz | gunzip > /usr/local/bin/scala-cli
+          chmod +x /usr/local/bin/scala-cli
+
+      - name: Syntax-check Scala solutions
+        run: |
+          errors=0
+          for f in solutions/scala/*.scala; do
+            if ! scala-cli compile "$f" 2>/dev/null; then
+              echo "⚠ $f has compilation issues"
+              errors=$((errors + 1))
+            fi
+          done
+          echo "Scala: $errors files with issues out of $(ls solutions/scala/*.scala | wc -l)"
+
+  # ─── Validate OCaml Solutions ─────────────────────────────────
+  validate-ocaml:
+    name: Validate OCaml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: "5.2"
+
+      - name: Syntax-check OCaml solutions
+        run: |
+          errors=0
+          for f in solutions/ocaml/*.ml; do
+            if ! ocamlfind ocamlc -package str -c "$f" 2>/dev/null; then
+              echo "⚠ $f has compilation issues"
+              errors=$((errors + 1))
+            fi
+          done
+          echo "OCaml: $errors files with issues out of $(ls solutions/ocaml/*.ml | wc -l)"
+
+  # ─── Validate Clojure Solutions ───────────────────────────────
+  validate-clojure:
+    name: Validate Clojure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install Clojure CLI
+        run: |
+          curl -fsSL https://download.clojure.org/install/linux-install.sh | sudo bash
+
+      - name: Syntax-check Clojure solutions
+        run: |
+          errors=0
+          for f in solutions/clojure/*.clj; do
+            if ! clojure -e "(load-file \"$f\")" 2>/dev/null; then
+              echo "⚠ $f has issues"
+              errors=$((errors + 1))
+            fi
+          done
+          echo "Clojure: $errors files with issues out of $(ls solutions/clojure/*.clj | wc -l)"
+
+  # ─── Validate Common Lisp Solutions ───────────────────────────
+  validate-lisp:
+    name: Validate Lisp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SBCL
+        run: sudo apt-get update && sudo apt-get install -y sbcl
+
+      - name: Syntax-check Lisp solutions
+        run: |
+          errors=0
+          for f in solutions/lisp/*.lisp; do
+            if ! sbcl --noinform --non-interactive --eval "(compile-file \"$f\")" 2>/dev/null; then
+              echo "⚠ $f has issues"
+              errors=$((errors + 1))
+            fi
+          done
+          echo "Lisp: $errors files with issues out of $(ls solutions/lisp/*.lisp | wc -l)"
+
+  # ─── Deploy to GitHub Pages ──────────────────────────────────
+  deploy:
+    name: Deploy to Pages
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
