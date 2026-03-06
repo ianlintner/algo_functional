@@ -98,6 +98,7 @@ jobs:
   validate-elixir:
     name: Validate Elixir
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -109,12 +110,14 @@ jobs:
       - name: Syntax-check Elixir solutions
         run: |
           errors=0
+          tmpdir=$(mktemp -d)
           for f in solutions/elixir/*.ex; do
-            if ! elixirc --no-halt "$f" 2>/dev/null; then
+            if ! elixirc -o "$tmpdir" "$f" 2>/dev/null; then
               echo "⚠ $f has syntax issues"
               errors=$((errors + 1))
             fi
           done
+          rm -rf "$tmpdir"
           echo "Elixir: $errors files with issues out of $(ls solutions/elixir/*.ex | wc -l)"
 
   # ─── Validate Scala Solutions ─────────────────────────────────
