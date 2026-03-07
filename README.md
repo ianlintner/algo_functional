@@ -34,6 +34,12 @@ Visit the deployed site at: [ianlintner.github.io/algo_functional](https://ianli
 - **Routing**: react-router-dom v7 (hash router)
 - **CI/CD**: GitHub Actions (build + per-language validation + GitHub Pages deploy)
 
+## Validation Status
+
+- **Production-gated**: site build, TypeScript frontend checks, and the long-established language validation jobs
+- **Experimental**: Scheme and Unison are now available throughout the site and extracted solution tree, but their validation jobs are currently non-blocking while those ports are being hand-polished in batches
+- **Practical note**: Unison support is present for browsing and iterative improvement, even though full repository-wide typechecking is still a work in progress
+
 ## Features
 
 - **Problem List** — filterable by difficulty, language, and search query

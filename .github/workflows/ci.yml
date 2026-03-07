@@ -218,6 +218,63 @@ jobs:
           done
           echo "Lisp: $errors files with issues out of $(ls solutions/lisp/*.lisp | wc -l)"
 
+  # ─── Validate Scheme Solutions ───────────────────────────────
+  validate-scheme:
+    name: Validate Scheme
+    runs-on: macos-latest
+    # Experimental while Scheme ports are being refined in batches.
+    continue-on-error: true
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Guile
+        run: brew install guile
+
+      - name: Syntax-check Scheme solutions
+        run: |
+          errors=0
+          tmpdir=$(mktemp -d)
+          for f in solutions/scheme/*.scm; do
+            out="$tmpdir/$(basename "$f" .scm).go"
+            if ! guild compile -o "$out" "$f" 2>/dev/null; then
+              echo "⚠ $f has issues"
+              errors=$((errors + 1))
+            fi
+          done
+          rm -rf "$tmpdir"
+          echo "Scheme: $errors files with issues out of $(ls solutions/scheme/*.scm | wc -l)"
+
+  # ─── Validate Unison Solutions ───────────────────────────────
+  validate-unison:
+    name: Validate Unison
+    runs-on: macos-latest
+    # Experimental while Unison ports are being refined in batches.
+    continue-on-error: true
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Unison
+        run: brew install unisonlang
+
+      - name: Typecheck Unison solutions
+        run: |
+          errors=0
+          export HOME=$(mktemp -d)
+          for f in solutions/unison/*.u; do
+            workdir=$(mktemp -d)
+            cp "$f" "$workdir/scratch.u"
+            if ! (cd "$workdir" && printf 'project.create ci\nload scratch.u\nquit\n' | ucm --no-file-watch >/tmp/ucm.log 2>&1 && grep -Eq 'These new definitions are ok to `add`|I found .*definitions? in .*scratch.u' /tmp/ucm.log); then
+              echo "⚠ $f has issues"
+              cat /tmp/ucm.log
+              errors=$((errors + 1))
+            fi
+            rm -rf "$workdir"
+          done
+          rm -rf "$HOME"
+          echo "Unison: $errors files with issues out of $(ls solutions/unison/*.u | wc -l)"
+
   # ─── Deploy to GitHub Pages ──────────────────────────────────
   deploy:
     name: Deploy to Pages
